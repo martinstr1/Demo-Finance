@@ -56,13 +56,34 @@ export default function SolicitudForm() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
+
+    const endpoint = process.env.NEXT_PUBLIC_SHEETS_ENDPOINT;
+    if (endpoint) {
+      try {
+        await fetch(endpoint, {
+          method: 'POST',
+          mode: 'no-cors', // Apps Script doesn't send CORS headers
+          body: JSON.stringify({
+            nombre:   form.nombre,
+            email:    form.email,
+            telefono: form.telefono,
+            producto: form.producto,
+            ingreso:  form.ingreso,
+            estado:   form.estado,
+          }),
+        });
+      } catch (_) {
+        // Redirect regardless of network errors
+      }
+    }
+
     router.push('/gracias');
   }
 
