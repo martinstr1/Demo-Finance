@@ -36,6 +36,32 @@ export default function SolicitudForm() {
   });
   const [errors, setErrors] = useState({});
 
+  function fillTestData() {
+    const vornamen = ['Carlos','María','José','Ana','Luis','Laura','Jorge','Sofía','Miguel','Valentina'];
+    const apellidos = ['García','Hernández','López','Martínez','González','Rodríguez','Pérez','Sánchez','Ramírez','Torres'];
+    const dominios  = ['gmail.com','hotmail.com','yahoo.com.mx','outlook.com'];
+    const prefijos  = ['55','33','81','664','222','442'];
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    const nombre   = `${pick(vornamen)} ${pick(apellidos)} ${pick(apellidos)}`;
+    const slug     = nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'.');
+    const email    = `${slug}@${pick(dominios)}`;
+    const telefono = pick(prefijos) + String(Math.floor(Math.random() * 90000000) + 10000000);
+    const productos = ['tarjeta','cuenta','hipoteca'];
+    const ingresos  = ['0-10000','10000-20000','20000-40000','40000-80000','80000+'];
+
+    setForm({
+      nombre,
+      email,
+      telefono,
+      producto: pick(productos),
+      ingreso:  pick(ingresos),
+      estado:   ESTADOS_MEXICO[Math.floor(Math.random() * ESTADOS_MEXICO.length)],
+      terminos: true,
+    });
+    setErrors({});
+  }
+
   function handleChange(e) {
     const { id, value, type, checked } = e.target;
     const field = id.replace('campo-', '');
@@ -87,6 +113,18 @@ export default function SolicitudForm() {
 
   return (
     <form id="form-solicitud" onSubmit={handleSubmit} noValidate className="space-y-5">
+      {/* Test-Data Button */}
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={fillTestData}
+          className="text-sm text-brand-blue border border-brand-blue/40 hover:bg-brand-blue/5
+                     px-3 py-1.5 rounded-lg transition-colors duration-150 flex items-center gap-1.5"
+        >
+          <span>🎲</span> Llenar con datos de prueba
+        </button>
+      </div>
+
       {/* Nombre */}
       <div>
         <label htmlFor="campo-nombre" className="block text-sm font-medium text-gray-700 mb-1">
