@@ -67,18 +67,16 @@ export default function SolicitudForm() {
     const endpoint = process.env.NEXT_PUBLIC_SHEETS_ENDPOINT;
     if (endpoint) {
       try {
-        await fetch(endpoint, {
-          method: 'POST',
-          mode: 'no-cors', // Apps Script doesn't send CORS headers
-          body: JSON.stringify({
-            nombre:   form.nombre,
-            email:    form.email,
-            telefono: form.telefono,
-            producto: form.producto,
-            ingreso:  form.ingreso,
-            estado:   form.estado,
-          }),
+        // GET + URLSearchParams: avoids POST→302-redirect→body-loss issue with Apps Script
+        const params = new URLSearchParams({
+          nombre:   form.nombre,
+          email:    form.email,
+          telefono: form.telefono,
+          producto: form.producto,
+          ingreso:  form.ingreso,
+          estado:   form.estado,
         });
+        await fetch(`${endpoint}?${params.toString()}`, { mode: 'no-cors' });
       } catch (_) {
         // Redirect regardless of network errors
       }
